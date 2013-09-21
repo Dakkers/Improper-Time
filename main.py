@@ -14,7 +14,7 @@ class TimeEvolve():
 window = pyg.window.Window(800,400)
 space = pym.Space()
 
-floor = pym.Segment(space.static_body, (0,10), (500,10), 5)
+floor = pym.Segment(space.static_body, (0,10), (500,10), 14d)
 space.add(floor)
 
 drawable_batch = pyg.graphics.Batch()

@@ -23,10 +23,7 @@ class Player(drawable.Drawable):
 	well_grounded = False
 
 	key_handler = key.KeyStateHandler()
-	#sprite_nonmoving = pyg.resource.image('stationary.png')
 	char_stationary_right = pyg.image.load('resources/charRight.png')
-	#sprite_mvright0 = pyg.resource.image('movingright0.png')
-	#sprite_mvright1 = pyg.resource.image('movingright1.png')
 	char_stationary_left = pyg.image.load('resources/charLeft.png')
 	char_moveleft1 = pyg.image.load('resources/charAnim/left01.png')
 	char_moveleft2 = pyg.image.load('resources/charAnim/left02.png')
@@ -46,10 +43,6 @@ class Player(drawable.Drawable):
 	char_moveright7 = pyg.image.load('resources/charAnim/right07.png')
 	char_moveright8 = pyg.image.load('resources/charAnim/right08.png')
 	char_moveright9 = pyg.image.load('resources/charAnim/right09.png')
-
-	#sprite_mvleft0 = pyg.resource.image('movingleft0.png')
-	#sprite_mvleft1 = pyg.resource.image('movingleft1.png')
-
 	anim_left = pyg.image.Animation.from_image_sequence([char_moveleft1,
 			char_moveleft2, char_moveleft3, char_moveleft4, char_moveleft5,
 			char_moveleft6, char_moveleft7, char_moveleft8, char_moveleft9], 0.1, True)
@@ -58,12 +51,12 @@ class Player(drawable.Drawable):
 			char_moveright6, char_moveright7, char_moveright8, char_moveright9], 0.1, True)
 
 	grounding = {
-					'normal' : Vec2d.zero(),
-					'penetration' : Vec2d.zero(),
-					'impulse' : Vec2d.zero(),
-					'position' : Vec2d.zero(),
-					'body' : None
-					}
+				'normal' : Vec2d.zero(),
+				'penetration' : Vec2d.zero(),
+				'impulse' : Vec2d.zero(),
+				'position' : Vec2d.zero(),
+				'body' : None
+				}
 
 	def __init__(self, space, *args, **kwargs):
 		super(Player,self).__init__(image_name='charRight.png',*args, **kwargs)
@@ -93,16 +86,13 @@ class Player(drawable.Drawable):
 
 	def on_key_press(self, symbol, modifiers):
 
-
 		if symbol == key.RIGHT:
-
 			if self.key_handler[key.LEFT]:	#if LEFT is being held and RIGHT is hit
 				self.move_left(False)
 			else:							#if only RIGHT is hit
 				self.move_right(True)
 
 		if symbol == key.LEFT:
-			
 			if self.key_handler[key.RIGHT]:	#if RIGHT is being held and LEFT is hit
 				self.move_right(False)
 			else:							#if only LEFT is hit
