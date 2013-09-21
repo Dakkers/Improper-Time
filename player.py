@@ -1,25 +1,35 @@
 import pyglet as pyg
-import drawable as drw
 import pymunk as pym
-from pyg.window import key
-from pym.vec2d import Vec2d
+from pyglet.window import key
+from pymunk.vec2d import Vec2d
+import resources, drawable
 
-#Using same constants as your initial file
+PLAYER_VELOCITY = 100.0
+
 class Player(drawable.Drawable):
 
-	body = pymunk.Body(5, pymunk.inf)
+	body = pym.Body(5, pym.inf)
 	body.position = 100,100
-	head = pymunk.Circle(body, 10, (0,5))
-	head2 = pymunk.Circle(body, 10, (0,13))
-	feet = pymunk.Circle(body, 10, (0,-5))
+	head = pym.Circle(body, 10, (0,5))
+	head2 = pym.Circle(body, 10, (0,13))
+	feet = pym.Circle(body, 10, (0,-5))
 	feet.friction = 1.0
 	feet.restitution, head.restitution, head2.restitution = 0.0, 0.0, 0.0
 	body.restitution = 0.0
 	body.penetration = 0.001
 
-	target_vx = 0.0
+	v_x, v_y = 0.0, 0.0
 	remaining_jumps = 2
 	well_grounded = False
+
+	key_handler = key.KeyStateHandler()
+	#sprite_nonmoving = pyg.resource.image('stationary.png')
+	sprite_right = pyg.image.load('resources/charRight.png')
+	#sprite_mvright0 = pyg.resource.image('movingright0.png')
+	#sprite_mvright1 = pyg.resource.image('movingright1.png')
+	sprite_left = pyg.image.load('resources/charLeft.png')
+	#sprite_mvleft0 = pyg.resource.image('movingleft0.png')
+	#sprite_mvleft1 = pyg.resource.image('movingleft1.png')
 
 	grounding = {
 					'normal' : Vec2d.zero(),
@@ -30,24 +40,74 @@ class Player(drawable.Drawable):
 					}
 
 	def __init__(self, space, *args, **kwargs):
-		super(Player,self).__init__(image_name='stationary.png',*args, **kwargs)
+		super(Player,self).__init__(image_name='charRight.png',*args, **kwargs)
 		#Name non-moving stationary
 
 		space.add(self.body, self.head, self.head2, self.feet)
 		self.feet.surface_velocity = (0,0)
 
-		self.key_handler = key.KeyStateHandler()
-		self.sprite_nonmoving = pyglet.image.load('stationary.png')
-		self.sprite_right = pyglet.image.load('nonmovingR.png')
-		self.sprite_mvright0 = pyglet.image.load('movingright0.png')
-		self.sprite_mvright1 = pyglet.image.load('movingright1.png')
-		self.sprite_left = pyglet.image.load('nonmovingL.png')
-		self.sprite_mvleft0 = pyglet.image.load('movingleft0.png')
-		self.sprite_mvleft1 = pyglet.image.load('movingleft1.png')
 
-		self.animate_right = pyglet.image.Animation.from_image_sequence([self.sprite_mvright0, 
+	def move_right(self, flag):
+		if flag:
+			print 'test2'
+		else:
+			self.image = self.sprite_right
+
+
+	def move_left(self, flag):
+		if flag:
+			print 'test'
+		else:
+			self.image = self.sprite_left
+
+
+	def on_key_press(self, symbol, modifiers):
+		if symbol == key.RIGHT:
+
+			if self.key_handler['LEFT']:	#if LEFT is being held and RIGHT is hit
+				self.move_left(False)
+				self.v_x = 0
+			else:							#if only RIGHT is hit
+				self.move_right(True)
+				self.v_x = PLAYER_VELOCITY
+
+		if symbol == key.LEFT:
+			
+			if self.key_handler['RIGHT']:	#if RIGHT is being held and LEFT is hit
+				self.move_right(False)
+				self.v_x = 0
+			else:							#if only LEFT is hit
+				self.move_left(True)
+				self.v_x = -PLAYER_VELOCITY
+
+
+	def on_key_release(self, symbol, modifiers):
+		if symbol == key.RIGHT:
+
+			if self.key_handler['LEFT']:	#if BOTH are being held and RIGHT is released
+				self.move_left(True)
+				self.v_x = - PLAYER_VELOCITY
+			else:							#if only RIGHT was being held and released
+				self.move_right(False)
+				self.v_x = 0
+
+		if symbol == key.LEFT:
+
+			if self.key_handler['RIGHT']:	#if BOTH are being held and LEFT is released
+				self.move_right(True)
+				self.v_x = PLAYER_VELOCITY
+			else:							#if only LEFT was being held and released
+				self.move_left(False)
+				self.v_x = 0
+
+	def update(self, dt):
+		print self.position
+		self.x += self.v_x * dt
+		self.y += self.v_y * dt
+
+	"""self.animate_right = pyg.image.Animation.from_image_sequence([self.sprite_mvright0, 
 			self.sprite_mvright1], 0.5, True)
-		self.anim_left = pyglet.image.Animation.from_image_sequence([self.sprite_mvleft0, 
+		self.anim_left = pyg.image.Animation.from_image_sequence([self.sprite_mvleft0, 
 			self.sprite_mvleft1], 0.5, True)
 		
 	def move_right(self, flag):
@@ -61,4 +121,4 @@ class Player(drawable.Drawable):
 		if flag:
 			self.image = self.anim_left
 		else:
-			self.image = self.sprite_left
+			self.image = self.sprite_left"""
