@@ -27,16 +27,18 @@ space.add(floor)
 drawable_batch = pyg.graphics.Batch()
 char = player.Player(space=space, batch=drawable_batch)
 
-bg = drawable.Drawable('Backgrounds/back.png')
-fg = pyg.sprite.Sprite(pyg.image.load('resources/Backgrounds/front.png'), x=0, y=0)
-
-forest_bg = pyg.image.load('resources/Backgrounds/back.png')
-lab_bg = pyg.image.load('resources/ColonialForest.png')
-bg.add_child(char)
+activebg = drawable.Drawable('backgrounds/labback.png')
+activefg = pyg.sprite.Sprite(pyg.image.load('resources/backgrounds/labfront.png'), x=0, y=0)
+activebg.id = 0
+forest_past_bg = pyg.image.load('resources/backgrounds/pastforestback.png')
+forest_past_fg = pyg.image.load('resources/backgrounds/pastforestfront.png')
+lab_bg = pyg.image.load('resources/backgrounds/labback.png')
+lab_fg = pyg.image.load('resources/backgrounds/labfront.png')
+activebg.add_child(char)
 drawEngine = False
 xoffset = 0.0
 ww, wh = window.width, window.height
-bgw, bgh = bg.width, bg.height
+bgw, bgh = activebg.width, activebg.height
 
 
 @window.event
@@ -46,11 +48,11 @@ def on_draw():
 	window.clear()
 	pyg.gl.glPushMatrix()
 	pyg.gl.glTranslatef(xoffset, 0, 0)	#shift graphics by amount xoffset - like a camera moving
-	bg.offsetdraw(0,0)
+	activebg.offsetdraw(0,0)
 	if drawEngine:
 		pdraw(space)
 	drawable_batch.draw()
-	fg.draw()
+	activefg.draw()
 	pyg.gl.glPopMatrix()
 
 @window.event
@@ -61,6 +63,7 @@ def on_key_press(symbol, modifiers):
 
 
 def update(dt):
+	global activebg
 	global xoffset
 	global bgw
 	global ww
@@ -76,31 +79,22 @@ def update(dt):
 	elif xoffset < (-bgw+ww):			#when char gets to right side of entire...
 		xoffset = -bgw + ww
 
-	
-	if char.posx < -30:
-		bg.image = lab_bg
-		bgw,bgh = bg.width, bg.height
-		char.posx = char.posx + bgw
-		xoffset = -bgw + ww + 30
-
-	if char.posx > 4480:
-		bg.image = forest_bg
-		bgw,bgh = bg.width, bg.height
-		char.posx = char.posx - bgw
-		xoffset = 0 
-
-
-
-	#if char.
-
-
-	
 	"""
-	if char.posx > 790:
-		bg_image = forest_bg		
-		char.posx = char.posx - 790"""
-
-	print char.posx
+	if char.posx < -30:
+		activebg.remove_child(char)
+		activebg.image = lab_bg
+		activebg.id = 1
+		bgw,bgh = activebg.width, activebg.height
+		activebg.add_child(char)
+		char.posx = char.posx + bgw
+	"""
+	if char.posx > 1315:							#
+		activebg.remove_child(char)
+		activebg = drawable.Drawable('backgrounds/pastforestback.png')
+		activefg = pyg.sprite.Sprite(pyg.image.load('resources/backgrounds/pastforestfront.png'))
+		#activebg.image = forest_past_bg
+		bgw,bgh = activebg.width, activebg.height
+		activebg.add_child(char)
 
 	 
 
