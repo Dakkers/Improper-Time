@@ -50,3 +50,15 @@ class Player(drawable.Drawable):
 		self.anim_left = pyglet.image.Animation.from_image_sequence([self.sprite_mvleft0, 
 			self.sprite_mvleft1], 0.5, True)
 		
+	def move_right(self, flag):
+		if flag:
+			self.image = self.anim_right
+		else:
+			self.image = self.sprite_right
+
+
+	def move_left(self, flag):
+		if flag:
+			self.image = self.anim_left
+		else:
+			self.image = self.sprite_left
