@@ -64,15 +64,19 @@ class Player(drawable.Drawable):
 	def move_right(self, flag):
 		if flag:
 			print 'test'
+			self.v_x = PLAYER_VELOCITY
 		else:
 			self.image = self.char_stationary_right
+			self.v_x = 0
 
 
 	def move_left(self, flag):
 		if flag:
 			self.image = self.anim_left
+			self.v_x = -PLAYER_VELOCITY
 		else:
 			self.image = self.char_stationary_left
+			self.v_x = 0
 
 
 	def on_key_press(self, symbol, modifiers):
@@ -80,19 +84,15 @@ class Player(drawable.Drawable):
 
 			if self.key_handler['LEFT']:	#if LEFT is being held and RIGHT is hit
 				self.move_left(False)
-				self.v_x = 0
 			else:							#if only RIGHT is hit
 				self.move_right(True)
-				self.v_x = PLAYER_VELOCITY
 
 		if symbol == key.LEFT:
 			
 			if self.key_handler['RIGHT']:	#if RIGHT is being held and LEFT is hit
 				self.move_right(False)
-				self.v_x = 0
 			else:							#if only LEFT is hit
 				self.move_left(True)
-				self.v_x = -PLAYER_VELOCITY
 
 
 	def on_key_release(self, symbol, modifiers):
@@ -115,6 +115,5 @@ class Player(drawable.Drawable):
 				self.v_x = 0
 
 	def update(self, dt):
-		print self.position
 		self.x += self.v_x * dt
 		self.y += self.v_y * dt

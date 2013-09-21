@@ -31,6 +31,7 @@ def update(dt):
 	#print 'derp'
 	space.step(dt)
 	char.update(dt)
+	
 
 window.push_handlers(char)
 window.push_handlers(char.key_handler)
