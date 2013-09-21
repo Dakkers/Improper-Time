@@ -4,21 +4,22 @@ from pyglet.window import key
 from pymunk.vec2d import Vec2d
 import resources, drawable
 
-PLAYER_VELOCITY = 100.0
+PLAYER_VELOCITY = 1000.0
 
 class Player(drawable.Drawable):
 
 	body = pym.Body(5, pym.inf)
 	body.position = 100,100
-	head = pym.Circle(body, 10, (0,5))
-	head2 = pym.Circle(body, 10, (0,13))
-	feet = pym.Circle(body, 10, (0,-5))
+	head = pym.Circle(body, 12, (17,95))
+	head2 = pym.Circle(body, 9, (18,19))
+	feet = pym.Circle(body, 9, (18,10))
 	feet.friction = 1.0
 	feet.restitution, head.restitution, head2.restitution = 0.0, 0.0, 0.0
 	body.restitution = 0.0
 	body.penetration = 0.001
+	feet.surface_velocity = (0,0)
 
-	v_x, v_y = 0.0, 0.0
+	v_x  = 0.0
 	remaining_jumps = 2
 	well_grounded = False
 
@@ -60,10 +61,8 @@ class Player(drawable.Drawable):
 
 	def __init__(self, space, *args, **kwargs):
 		super(Player,self).__init__(image_name='charRight.png',*args, **kwargs)
-		#Name non-moving stationary
-
 		space.add(self.body, self.head, self.head2, self.feet)
-		self.feet.surface_velocity = (0,0)
+		self.posx, self.posy = 100,100
 
 
 	def move_right(self, flag):
@@ -102,19 +101,17 @@ class Player(drawable.Drawable):
 	def on_key_release(self, symbol, modifiers):
 
 		if symbol == key.RIGHT:
-
 			if self.key_handler[key.LEFT]:	#if BOTH are being held and RIGHT is released
 				self.move_left(True)
 			else:							#if only RIGHT was being held and released
 				self.move_right(False)
 
 		if symbol == key.LEFT:
-
 			if self.key_handler[key.RIGHT]:	#if BOTH are being held and LEFT is released
 				self.move_right(True)
 			else:							#if only LEFT was being held and released
 				self.move_left(False)
 
 	def update(self, dt):
-		self.x += self.v_x * dt
-		self.y += self.v_y * dt
+		self.feet.surface_velocity = self.v_x, 0
+		self.posx, self.posy = self.body.position
