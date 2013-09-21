@@ -28,7 +28,7 @@ def update(dt):
 	#print 'derp'
 	space.step(dt)
 
-pyg.clock.schedule_interval(update, 1/10.0)
+pyg.clock.schedule_interval(update, 1/30.0)
 
 if __name__ == '__main__':
 	pyg.app.run()
