@@ -31,7 +31,7 @@ bg = drawable.Drawable('Backgrounds/back.png')
 fg = pyg.sprite.Sprite(pyg.image.load('resources/Backgrounds/front.png'), x=0, y=0)
 
 forest_bg = pyg.image.load('resources/Backgrounds/back.png')
-lab_bg = pyg.image.load('resources/bg-02.png')
+lab_bg = pyg.image.load('resources/ColonialForest.png')
 bg.add_child(char)
 drawEngine = False
 xoffset = 0.0
@@ -62,6 +62,8 @@ def on_key_press(symbol, modifiers):
 
 def update(dt):
 	global xoffset
+	global bgw
+	global ww
 	space.step(dt)
 	char.update(dt)
 
@@ -74,14 +76,28 @@ def update(dt):
 	elif xoffset < (-bgw+ww):			#when char gets to right side of entire...
 		xoffset = -bgw + ww
 
-"""
-	if char.posx < -20:
+	
+	if char.posx < -30:
 		bg.image = lab_bg
-		char.posx = char.posx + 810
-	"""
+		bgw,bgh = bg.width, bg.height
+		char.posx = char.posx + bgw
+		xoffset = -bgw + ww + 30
+
+	if char.posx > 4480:
+		bg.image = forest_bg
+		bgw,bgh = bg.width, bg.height
+		char.posx = char.posx - bgw
+		xoffset = 0 
+
+
+
+	#if char.
+
+
+	
 	"""
 	if char.posx > 790:
-		bg_image = forest_bg
+		bg_image = forest_bg		
 		char.posx = char.posx - 790"""
 
 	print char.posx
@@ -93,7 +109,7 @@ def update(dt):
 
 window.push_handlers(char)
 window.push_handlers(char.key_handler)
-pyg.clock.schedule_interval(update, 1/120.0)
+pyg.clock.schedule_interval(update, 1/100.0)
 
 if __name__ == '__main__':
 	pyg.app.run()
