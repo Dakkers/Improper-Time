@@ -2,7 +2,11 @@ import pyglet as pyg
 from pyglet.window import key
 import pymunk as pym
 from pymunk.pyglet_util import draw as pdraw
-import resources, player, drawable
+import resources, player, drawable, npc
+
+count = 0
+flag_glob = 0
+
 """
 class TimeEvolve(drawable.Drawable):
 	def __init__(self, initback):
@@ -14,6 +18,7 @@ class TimeEvolve(drawable.Drawable):
 
 window = pyg.window.Window(800,400)
 space = pym.Space()
+#space1 = pym.Space()
 space.gravity = 0, -1000					#looks more real than -9.8 or -10
 space.collision_slop = 0.0000001			#reduce penetration
 space.collision_bias = pow(1.0-0.4, 120)	#determine speed of overlap - reduce penetration
@@ -25,7 +30,9 @@ floor.restituion = 0.0 	#reduce bounciness
 space.add(floor)
 
 drawable_batch = pyg.graphics.Batch()
+npc_batch = pyg.graphics.Batch()
 char = player.Player(space=space, batch=drawable_batch)
+npc_char = npc.NPC(space=space, batch=npc_batch)
 
 bg = drawable.Drawable('Backgrounds/back.png')
 fg = pyg.sprite.Sprite(pyg.image.load('resources/Backgrounds/front.png'), x=0, y=0)
@@ -33,6 +40,7 @@ fg = pyg.sprite.Sprite(pyg.image.load('resources/Backgrounds/front.png'), x=0, y
 forest_bg = pyg.image.load('resources/Backgrounds/back.png')
 lab_bg = pyg.image.load('resources/bg-02.png')
 bg.add_child(char)
+bg.add_child(npc_char)
 drawEngine = False
 xoffset = 0.0
 ww, wh = window.width, window.height
@@ -50,6 +58,7 @@ def on_draw():
 	if drawEngine:
 		pdraw(space)
 	drawable_batch.draw()
+	npc_batch.draw()
 	fg.draw()
 	pyg.gl.glPopMatrix()
 
@@ -61,9 +70,20 @@ def on_key_press(symbol, modifiers):
 
 
 def update(dt):
+	global count
+	global flag_glob
+	count += 1
 	global xoffset
 	space.step(dt)
+	#space1.step(dt)
 	char.update(dt)
+	#npc.update(dt)
+	if count % 10 == 0:
+		flag_glob = 1
+	elif count % 5 == 0:
+		flag_glob = 0
+	npc_char.update(flag_glob, dt)
+
 
 	if char.posx + xoffset > 600:		#when char gets to right side of screen, scroll right by using glTranslatef(xoffset)
 		xoffset = 600 - char.posx
@@ -74,17 +94,13 @@ def update(dt):
 	elif xoffset < (-bgw+ww):			#when char gets to right side of entire...
 		xoffset = -bgw + ww
 
+	print char.posx
+
 """
 	if char.posx < -20:
 		bg.image = lab_bg
 		char.posx = char.posx + 810
 	"""
-	"""
-	if char.posx > 790:
-		bg_image = forest_bg
-		char.posx = char.posx - 790"""
-
-	print char.posx
 
 	 
 
