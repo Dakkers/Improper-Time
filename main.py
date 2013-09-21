@@ -31,7 +31,7 @@ def on_draw():
 	window.clear()
 	bg.draw()
 	drawable_batch.draw()
-	#pdraw(space)
+	pdraw(space)
 
 def update(dt):
 	#print 'derp'
