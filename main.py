@@ -30,8 +30,11 @@ def on_draw():
 def update(dt):
 	#print 'derp'
 	space.step(dt)
+	char.update(dt)
 
-pyg.clock.schedule_interval(update, 1/30.0)
+window.push_handlers(char)
+window.push_handlers(char.key_handler)
+pyg.clock.schedule_interval(update, 1/60.0)
 
 if __name__ == '__main__':
 	pyg.app.run()
