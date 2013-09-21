@@ -2,7 +2,9 @@ import pyglet as pyg
 from pyglet.window import key
 import pymunk as pym
 from pymunk.pyglet_util import draw as pdraw
-import resources, player, drawable
+import resources, player, drawable, npc
+
+
 """
 class TimeEvolve(drawable.Drawable):
 	def __init__(self, initback):
@@ -14,6 +16,7 @@ class TimeEvolve(drawable.Drawable):
 
 window = pyg.window.Window(800,400)
 space = pym.Space()
+#space1 = pym.Space()
 space.gravity = 0, -1000					#looks more real than -9.8 or -10
 space.collision_slop = 0.0000001			#reduce penetration
 space.collision_bias = pow(1.0-0.4, 120)	#determine speed of overlap - reduce penetration
@@ -25,6 +28,7 @@ floor.restituion = 0.0 	#reduce bounciness
 space.add(floor)
 
 drawable_batch = pyg.graphics.Batch()
+npc_batch = pyg.graphics.Batch()
 char = player.Player(space=space, batch=drawable_batch)
 
 activebg = drawable.Drawable('backgrounds/labback.png')
@@ -35,6 +39,7 @@ forest_past_fg = pyg.image.load('resources/backgrounds/pastforestfront.png')
 lab_bg = pyg.image.load('resources/backgrounds/labback.png')
 lab_fg = pyg.image.load('resources/backgrounds/labfront.png')
 activebg.add_child(char)
+
 drawEngine = False
 xoffset = 0.0
 ww, wh = window.width, window.height
@@ -52,7 +57,6 @@ def on_draw():
 	if drawEngine:
 		pdraw(space)
 	drawable_batch.draw()
-	activefg.draw()
 	pyg.gl.glPopMatrix()
 
 @window.event
@@ -64,11 +68,14 @@ def on_key_press(symbol, modifiers):
 
 def update(dt):
 	global activebg
+	global count
+	global flag_glob
 	global xoffset
 	global bgw
 	global ww
 	space.step(dt)
 	char.update(dt)
+
 
 	if char.posx + xoffset > 600:		#when char gets to right side of screen, scroll right by using glTranslatef(xoffset)
 		xoffset = 600 - char.posx
@@ -88,16 +95,12 @@ def update(dt):
 		activebg.add_child(char)
 		char.posx = char.posx + bgw
 	"""
-	if char.posx > 1315:							#
+	if char.posx > 1315:
 		activebg.remove_child(char)
 		activebg = drawable.Drawable('backgrounds/pastforestback.png')
 		activefg = pyg.sprite.Sprite(pyg.image.load('resources/backgrounds/pastforestfront.png'))
-		#activebg.image = forest_past_bg
 		bgw,bgh = activebg.width, activebg.height
 		activebg.add_child(char)
-
-	 
-
 
 	
 
