@@ -24,12 +24,26 @@ class Player(drawable.Drawable):
 
 	key_handler = key.KeyStateHandler()
 	#sprite_nonmoving = pyg.resource.image('stationary.png')
-	sprite_right = pyg.image.load('resources/charRight.png')
+	char_stationary_right = pyg.image.load('resources/charRight.png')
 	#sprite_mvright0 = pyg.resource.image('movingright0.png')
 	#sprite_mvright1 = pyg.resource.image('movingright1.png')
-	sprite_left = pyg.image.load('resources/charLeft.png')
+	char_stationary_left = pyg.image.load('resources/charLeft.png')
+	char_moveleft1 = pyg.image.load('resources/charAnim/left01.png')
+	char_moveleft2 = pyg.image.load('resources/charAnim/left02.png')
+	char_moveleft3 = pyg.image.load('resources/charAnim/left03.png')
+	char_moveleft4 = pyg.image.load('resources/charAnim/left04.png')
+	char_moveleft5 = pyg.image.load('resources/charAnim/left05.png')
+	char_moveleft6 = pyg.image.load('resources/charAnim/left06.png')
+	char_moveleft7 = pyg.image.load('resources/charAnim/left07.png')
+	char_moveleft8 = pyg.image.load('resources/charAnim/left08.png')
+	char_moveleft9 = pyg.image.load('resources/charAnim/left09.png')
+
 	#sprite_mvleft0 = pyg.resource.image('movingleft0.png')
 	#sprite_mvleft1 = pyg.resource.image('movingleft1.png')
+
+	anim_left = pyg.image.Animation.from_image_sequence([char_moveleft1,
+			char_moveleft2, char_moveleft3, char_moveleft4, char_moveleft5,
+			char_moveleft6, char_moveleft7, char_moveleft8, char_moveleft9], 0.1, True)
 
 	grounding = {
 					'normal' : Vec2d.zero(),
@@ -49,16 +63,16 @@ class Player(drawable.Drawable):
 
 	def move_right(self, flag):
 		if flag:
-			print 'test2'
+			print 'test'
 		else:
-			self.image = self.sprite_right
+			self.image = self.char_stationary_right
 
 
 	def move_left(self, flag):
 		if flag:
-			print 'test'
+			self.image = self.anim_left
 		else:
-			self.image = self.sprite_left
+			self.image = self.char_stationary_left
 
 
 	def on_key_press(self, symbol, modifiers):
@@ -104,21 +118,3 @@ class Player(drawable.Drawable):
 		print self.position
 		self.x += self.v_x * dt
 		self.y += self.v_y * dt
-
-	"""self.animate_right = pyg.image.Animation.from_image_sequence([self.sprite_mvright0, 
-			self.sprite_mvright1], 0.5, True)
-		self.anim_left = pyg.image.Animation.from_image_sequence([self.sprite_mvleft0, 
-			self.sprite_mvleft1], 0.5, True)
-		
-	def move_right(self, flag):
-		if flag:
-			self.image = self.anim_right
-		else:
-			self.image = self.sprite_right
-
-
-	def move_left(self, flag):
-		if flag:
-			self.image = self.anim_left
-		else:
-			self.image = self.sprite_left"""
