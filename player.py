@@ -4,7 +4,7 @@ from pyglet.window import key
 from pymunk.vec2d import Vec2d
 import resources, drawable
 
-PLAYER_VELOCITY = 100.0
+PLAYER_VELOCITY = 1000.0
 
 class Player(drawable.Drawable):
 
