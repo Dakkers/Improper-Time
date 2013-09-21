@@ -18,7 +18,7 @@ space.gravity = 0, -1000					#looks more real than -9.8 or -10
 space.collision_slop = 0.0000001			#reduce penetration
 space.collision_bias = pow(1.0-0.4, 120)	#determine speed of overlap - reduce penetration
 space.iterations = 8 						#reduce penetration (haha penetration)
-floor = pym.Segment(space.static_body, (0,10), (5000,10), 14)
+floor = pym.Segment(space.static_body, (-1000,10), (5000,10), 14)
 floor.friction = 1.0
 floor.group = 1 		#objects of the same (non-zero) group do not collide!
 floor.restituion = 0.0 	#reduce bounciness
@@ -27,7 +27,11 @@ space.add(floor)
 drawable_batch = pyg.graphics.Batch()
 char = player.Player(space=space, batch=drawable_batch)
 
-bg = drawable.Drawable('ColonialForest.png')
+bg = drawable.Drawable('Backgrounds/back.png')
+fg = pyg.sprite.Sprite(pyg.image.load('resources/Backgrounds/front.png'), x=0, y=0)
+
+forest_bg = pyg.image.load('resources/Backgrounds/back.png')
+lab_bg = pyg.image.load('resources/bg-02.png')
 bg.add_child(char)
 drawEngine = False
 xoffset = 0.0
@@ -46,6 +50,7 @@ def on_draw():
 	if drawEngine:
 		pdraw(space)
 	drawable_batch.draw()
+	fg.draw()
 	pyg.gl.glPopMatrix()
 
 @window.event
@@ -60,21 +65,35 @@ def update(dt):
 	space.step(dt)
 	char.update(dt)
 
-	if char.x + xoffset > 600:		#when char gets to right side of screen, scroll right by using glTranslatef(xoffset)
-		xoffset = 600 - char.x
-	if char.x + xoffset < 200:		#when char gets to left side...
-		xoffset = 200 - char.x
-	if xoffset > 0:					#when char gets to left side of entire background, stop scrolling
+	if char.posx + xoffset > 600:		#when char gets to right side of screen, scroll right by using glTranslatef(xoffset)
+		xoffset = 600 - char.posx
+	elif char.posx + xoffset < 200:		#when char gets to left side...
+		xoffset = 200 - char.posx
+	if xoffset > 0:						#when char gets to left side of entire background, stop scrolling
 		xoffset = 0
-	if xoffset < (-bgw+ww):			#when char gets to right side of entire...
+	elif xoffset < (-bgw+ww):			#when char gets to right side of entire...
 		xoffset = -bgw + ww
+
+"""
+	if char.posx < -20:
+		bg.image = lab_bg
+		char.posx = char.posx + 810
+	"""
+	"""
+	if char.posx > 790:
+		bg_image = forest_bg
+		char.posx = char.posx - 790"""
+
+	print char.posx
+
+	 
 
 
 	
 
 window.push_handlers(char)
 window.push_handlers(char.key_handler)
-pyg.clock.schedule_interval(update, 1/60.0)
+pyg.clock.schedule_interval(update, 1/120.0)
 
 if __name__ == '__main__':
 	pyg.app.run()
