@@ -3,18 +3,22 @@ from pyglet.window import key
 import pymunk as pym
 from pymunk.pyglet_util import draw as pdraw
 import resources, player, drawable
-
-class TimeEvolve():
+"""
+class TimeEvolve(drawable.Drawable):
 	def __init__(self, initback):
 		self.bg = pyg.sprite.Sprite(pyg.resource.image(initback))
+		self.posx, self.posy = self.bg.position
 
 	def triggered(self, newback):
-		self.bg = pyg.sprite.Sprite(pyg.resource.image(newback))
+		self.bg = pyg.sprite.Sprite(pyg.resource.image(newback))"""
 
 window = pyg.window.Window(800,400)
 space = pym.Space()
-space.gravity = 0, -1000	#looks more real than -9.8 or -10
-floor = pym.Segment(space.static_body, (0,10), (500,10), 14)
+space.gravity = 0, -1000					#looks more real than -9.8 or -10
+space.collision_slop = 0.0000001			#reduce penetration
+space.collision_bias = pow(1.0-0.4, 120)	#determine speed of overlap - reduce penetration
+space.iterations = 8 						#reduce penetration (haha penetration)
+floor = pym.Segment(space.static_body, (0,10), (2000,10), 14)
 floor.friction = 1.0
 floor.group = 1 		#objects of the same (non-zero) group do not collide!
 floor.restituion = 0.0 	#reduce bounciness
@@ -23,23 +27,24 @@ space.add(floor)
 drawable_batch = pyg.graphics.Batch()
 char = player.Player(space=space, batch=drawable_batch)
 
-#mario = pyg.resource.image('mario.png')
-#bg = pyg.sprite.Sprite(mario)
-initback = TimeEvolve('mario.png')
-bg = initback.bg
-#Sprite has height and width attributes - use that for scrolling
+bg = drawable.Drawable('ColonialForest.png')
 drawEngine = False
+xoffset = 0.0
+ww, wh = window.width, window.height
+bgw, bgh = bg.width, bg.height
 
 @window.event
 def on_draw():
 	global drawEngine
+	global xoffset
 	window.clear()
-	#pyg.gl.glPushMatrix()
-	bg.draw()
+	pyg.gl.glPushMatrix()
+	pyg.gl.glTranslatef(xoffset, 0, 0)
+	bg.offsetdraw(0,0)
 	drawable_batch.draw()
 	if drawEngine:
 		pdraw(space)
-	#pyg.gl.glPopMatrix()
+	pyg.gl.glPopMatrix()
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -49,9 +54,20 @@ def on_key_press(symbol, modifiers):
 
 
 def update(dt):
-	#print 'derp'
+	global xoffset
 	space.step(dt)
 	char.update(dt)
+
+	if char.posx + xoffset > 600:	#when char gets to right side of screen, scroll right by using glTranslatef(xoffset)
+		xoffset = 600 - char.posx
+	if char.posx + xoffset < 200:	#when char gets to left side...
+		xoffset = 200 - char.posx
+	if xoffset > 0:					#when char gets to left side of entire background, stop scrolling
+		xoffset = 0
+	if xoffset < (-bgw+ww):			#when char gets to right side of entire...
+		xoffset = -bgw + ww
+
+
 	
 
 window.push_handlers(char)
