@@ -17,8 +17,9 @@ class Player(drawable.Drawable):
 	feet.restitution, head.restitution, head2.restitution = 0.0, 0.0, 0.0
 	body.restitution = 0.0
 	body.penetration = 0.001
+	feet.surface_velocity = (0,0)
 
-	v_x, v_y = 0.0, 0.0
+	v_x  = 0.0
 	remaining_jumps = 2
 	well_grounded = False
 
@@ -60,10 +61,8 @@ class Player(drawable.Drawable):
 
 	def __init__(self, space, *args, **kwargs):
 		super(Player,self).__init__(image_name='charRight.png',*args, **kwargs)
-		#Name non-moving stationary
-
 		space.add(self.body, self.head, self.head2, self.feet)
-		self.feet.surface_velocity = (0,0)
+		self.x, self.y = 100,100
 
 
 	def move_right(self, flag):
@@ -116,5 +115,14 @@ class Player(drawable.Drawable):
 				self.move_left(False)
 
 	def update(self, dt):
-		self.x += self.v_x * dt
-		self.y += self.v_y * dt
+		"""
+		self.feet.surface_velocity = self.v_x, 0
+		self.posx, self.posy = self.body.position
+		print self.feet.surface_velocity
+		"""
+		self.feet.surface_velocity = self.v_x, 0
+		#self.x += self.v_x * dt
+		#self.y += self.v_y * dt
+		#self.body.position = self.x, self.y
+		self.x, self.y = self.body.position
+		print self.position

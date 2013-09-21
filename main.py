@@ -13,25 +13,40 @@ class TimeEvolve():
 
 window = pyg.window.Window(800,400)
 space = pym.Space()
-
-floor = pym.Segment(space.static_body, (0,10), (500,10), 14d)
+space.gravity = 0, -1000	#looks more real than -9.8 or -10
+floor = pym.Segment(space.static_body, (0,10), (500,10), 14)
+floor.friction = 1.0
+floor.group = 1 		#objects of the same (non-zero) group do not collide!
+floor.restituion = 0.0 	#reduce bounciness
 space.add(floor)
 
 drawable_batch = pyg.graphics.Batch()
-char = player.Player(space=space, batch=drawable_batch, x=10, y=50)
+char = player.Player(space=space, batch=drawable_batch)
 
 #mario = pyg.resource.image('mario.png')
 #bg = pyg.sprite.Sprite(mario)
 initback = TimeEvolve('mario.png')
 bg = initback.bg
 #Sprite has height and width attributes - use that for scrolling
+drawEngine = False
 
 @window.event
 def on_draw():
+	global drawEngine
 	window.clear()
+	#pyg.gl.glPushMatrix()
 	bg.draw()
 	drawable_batch.draw()
-	pdraw(space)
+	if drawEngine:
+		pdraw(space)
+	#pyg.gl.glPopMatrix()
+
+@window.event
+def on_key_press(symbol, modifiers):
+	global drawEngine
+	if symbol == key.E:
+		drawEngine = not drawEngine
+
 
 def update(dt):
 	#print 'derp'
