@@ -11,7 +11,7 @@ floor = pym.Segment(space.static_body, (0,10), (500,10), 5)
 space.add(floor)
 
 drawable_batch = pyg.graphics.Batch()
-char = player.Player(space=space, batch=drawable_batch)
+char = player.Player(space=space, batch=drawable_batch, x=10, y=50)
 
 mario = pyg.resource.image('mario.png')
 bg = pyg.sprite.Sprite(mario)
