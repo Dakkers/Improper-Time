@@ -2,7 +2,7 @@ import pyglet as pyg
 from pyglet.window import key
 import pymunk as pym
 from pymunk.pyglet_util import draw as pdraw
-import resources, player, drawable, npc
+import resources, player, drawable, npc, player2fixing
 
 
 """
@@ -16,7 +16,6 @@ class TimeEvolve(drawable.Drawable):
 
 window = pyg.window.Window(800,400)
 space = pym.Space()
-#space1 = pym.Space()
 space.gravity = 0, -1000					#looks more real than -9.8 or -10
 space.collision_slop = 0.0000001			#reduce penetration
 space.collision_bias = pow(1.0-0.4, 120)	#determine speed of overlap - reduce penetration
@@ -29,35 +28,35 @@ space.add(floor)
 
 drawable_batch = pyg.graphics.Batch()
 npc_batch = pyg.graphics.Batch()
-char = player.Player(space=space, batch=drawable_batch)
+char = player2fixing.Player(space=space, batch=drawable_batch)
 
-activebg = drawable.Drawable('backgrounds/labback.png')
-activefg = pyg.sprite.Sprite(pyg.image.load('resources/backgrounds/labfront.png'), x=0, y=0)
-activebg.id = 0
 forest_past_bg = pyg.image.load('resources/backgrounds/pastforestback.png')
-forest_past_fg = pyg.image.load('resources/backgrounds/pastforestfront.png')
+forest_past_fg = pyg.sprite.Sprite(pyg.image.load('resources/backgrounds/pastforestfront.png'))
 lab_bg = pyg.image.load('resources/backgrounds/labback.png')
-lab_fg = pyg.image.load('resources/backgrounds/labfront.png')
-activebg.add_child(char)
+lab_fg = pyg.sprite.Sprite(pyg.image.load('resources/backgrounds/labfront.png'))
 
-drawEngine = False
+activebg, activefg = lab_bg, lab_fg
+
+drawEngine = True
 xoffset = 0.0
 ww, wh = window.width, window.height
 bgw, bgh = activebg.width, activebg.height
+
+ACTIVEbg = activebg.get_region(xoffset,0,800,400)
 
 
 @window.event
 def on_draw():
 	global drawEngine
 	global xoffset
+	global ACTIVEbg
 	window.clear()
-	pyg.gl.glPushMatrix()
-	pyg.gl.glTranslatef(xoffset, 0, 0)	#shift graphics by amount xoffset - like a camera moving
-	activebg.offsetdraw(0,0)
+	activebg.blit(xoffset,0)
 	if drawEngine:
 		pdraw(space)
 	drawable_batch.draw()
-	pyg.gl.glPopMatrix()
+	activefg.set_position(xoffset,0)
+	#activefg.draw()
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -67,17 +66,28 @@ def on_key_press(symbol, modifiers):
 
 
 def update(dt):
-	global activebg
-	global count
-	global flag_glob
 	global xoffset
-	global bgw
-	global ww
-	global dtflag
 	space.step(dt)
 	char.update(dt)
 
+	print xoffset
+	# if char.x + xoffset > 600:		#when char gets to right side of screen, scroll right by using glTranslatef(xoffset)
+	# 	xoffset = 600 - char.PLAYER_VELOCITY*dt
+	# if char.x + xoffset < 200:		#when char gets to left side...
+	# 	xoffset = 200 - char.PLAYER_VELOCITY*dt
+	# if xoffset > 0:						#when char gets to left side of entire background, stop scrolling
+	# 	xoffset = 0
+	# if xoffset < (-bgw+ww):			#when char gets to right side of entire...
+	# 	xoffset = -bgw + ww
 
+	if char.x < 200:
+		xoffset = 0
+	elif char.x > (activebg.width - 200):
+		xoffset = activebg.width - 200
+	else:
+		xoffset = char.x - 200
+
+	"""
 	if char.posx + xoffset > 600:		#when char gets to right side of screen, scroll right by using glTranslatef(xoffset)
 		xoffset = 600 - char.posx
 	elif char.posx + xoffset < 200:		#when char gets to left side...
@@ -87,25 +97,23 @@ def update(dt):
 	elif xoffset < (-bgw+ww):			#when char gets to right side of entire...
 		xoffset = -bgw + ww
 
-	
+
 	if char.posx < -30:
 		activebg.remove_child(char)
 		activebg.image = lab_bg
 		activebg.id = 1
 		bgw,bgh = activebg.width, activebg.height
 		activebg.add_child(char)
-		xoffset = ww - bgw
 		char.posx = char.posx + bgw
-	
+
 	if char.posx > 1315:
 		activebg.remove_child(char)
-		activebg.image = forest_past_bg
-		activefg.image = forest_past_fg
+		activebg = drawable.Drawable('backgrounds/pastforestback.png')
+		activefg = pyg.sprite.Sprite(pyg.image.load('resources/backgrounds/pastforestfront.png'))
 		bgw,bgh = activebg.width, activebg.height
-		xoffset = 0
 		activebg.add_child(char)
-		char.body.x = 0
-	print char.x
+	"""
+	
 
 window.push_handlers(char)
 window.push_handlers(char.key_handler)
