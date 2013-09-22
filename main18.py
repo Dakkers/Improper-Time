@@ -31,14 +31,25 @@ space.add(floor)
 drawable_batch = pyg.graphics.Batch()
 char = player.Player(space=space, batch=drawable_batch)
 
-bg = [pyg.image.load('resources/backgrounds/labback.png'),
-	  pyg.image.load('resources/backgrounds/pastforestback.png')]
-fg = [pyg.image.load('resources/backgrounds/labfront.png'),
-	  pyg.image.load('resources/backgrounds/pastforestfront.png')]
+bg = [drawable.Drawable('backgrounds/labback.png'),
+	  drawable.Drawable('backgrounds/pastforestback.png')]
+fg = [drawable.Drawable('backgrounds/labfront.png'),
+	  drawable.Drawable('backgrounds/pastforestfront.png')]
 
 active_bg_id = 0
 active_fg_id = 0
 
+# activebg = drawable.Drawable('backgrounds/labback.png')
+# activefg = pyg.sprite.Sprite(pyg.image.load('resources/backgrounds/labfront.png'), x=0, y=0)
+# activebg.id = 0
+
+# forest_past_bg = pyg.image.load('resources/backgrounds/pastforestback.png')
+# forest_past_fg = pyg.image.load('resources/backgrounds/pastforestfront.png')
+
+# lab_bg = pyg.image.load('resources/backgrounds/labback.png')
+# lab_fg = pyg.image.load('resources/backgrounds/labfront.png')
+
+# activebg.add_child(char)
 bg[active_bg_id].add_child(char)
 drawEngine = False
 xoffset = 0.0
@@ -50,14 +61,20 @@ bgw, bgh = bg[active_bg_id].width, bg[active_bg_id].height
 def on_draw():
 	global drawEngine
 	global xoffset
-
+	
 	window.clear()
-	bg[active_bg_id].blit(xoffset, 0)
+	
+	# activebg.offsetdraw(0,0)
+	# bg[active_bg_id].offsetdraw(0,0)
+	bg[active_bg_id].offsetdraw(0,0)
+	print bg[active_bg_id].posx, bg[active_bg_id].posy 
+
 	if drawEngine:
 		pdraw(space)
-
+	
 	drawable_batch.draw()
-	fg[active_fg_id].blit(xoffset, 0)
+	# activefg.draw()
+	fg[active_fg_id].draw()
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -73,7 +90,7 @@ def update(dt):
 	global ww
 	global active_bg_id
 	global active_fg_id
-
+	
 	space.step(dt)
 	char.update(dt)
 
@@ -108,11 +125,22 @@ def update(dt):
 		bg[active_bg_id].remove_child(char)
 		active_bg_id = active_bg_id + 1
 		active_fg_id = active_fg_id + 1
-		pyg.gl.glLoadIdentity()
+		pyg.gl.glLoadIdentity()	
 		bg[active_bg_id].add_child(char)
 		bgw, bgh  = bg[active_bg_id].width, bg[active_bg_id].height
 		char.posx = 0
 		xoffset   = 0
+
+	# if char.posx < -30:
+	# 	activebg.image = forest_past_bg
+	# 	activebg.id = 1
+	# 	bgw,bgh = activebg.width, activebg.height
+	# 	char.posx = char.posx + bgw
+
+	# if char.posx > 4490:
+	# 	activebg.image = lab_bg
+	# 	bgw,bgh = activebg.width, activebg.height
+	# 	char.posx = char.posx - bgw
 
 	print char.posx
 
