@@ -15,7 +15,6 @@ class Drawable(pyglet.sprite.Sprite):
 
 		for child in self.children:
 			child.offsetdraw(x0 + self.posx, y0 + self.posy)
-			#print x0, self.posx, y0, self.posy
 
 	def add_child(self, child):
 		if child not in self.children:

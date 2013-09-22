@@ -94,6 +94,7 @@ class Player(drawable.Drawable):
 				self.move_left(True)
 
 
+
 	def on_key_release(self, symbol, modifiers):
 
 		if symbol == key.RIGHT:
