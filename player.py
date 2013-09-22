@@ -4,7 +4,7 @@ from pyglet.window import key
 from pymunk.vec2d import Vec2d
 import resources, drawable
 
-PLAYER_VELOCITY = 300.0
+PLAYER_VELOCITY = 600.0
 
 class Player(drawable.Drawable):
 
@@ -24,32 +24,28 @@ class Player(drawable.Drawable):
 	well_grounded = False
 
 	key_handler = key.KeyStateHandler()
-	char_stationary_right = pyg.image.load('resources/charRight.png')
-	char_stationary_left = pyg.image.load('resources/charLeft.png')
-	char_moveleft1 = pyg.image.load('resources/charAnim/left01.png')
-	char_moveleft2 = pyg.image.load('resources/charAnim/left02.png')
-	char_moveleft3 = pyg.image.load('resources/charAnim/left03.png')
-	char_moveleft4 = pyg.image.load('resources/charAnim/left04.png')
-	char_moveleft5 = pyg.image.load('resources/charAnim/left05.png')
-	char_moveleft6 = pyg.image.load('resources/charAnim/left06.png')
-	char_moveleft7 = pyg.image.load('resources/charAnim/left07.png')
-	char_moveleft8 = pyg.image.load('resources/charAnim/left08.png')
-	char_moveleft9 = pyg.image.load('resources/charAnim/left09.png')
-	char_moveright1 = pyg.image.load('resources/charAnim/right01.png')
-	char_moveright2 = pyg.image.load('resources/charAnim/right02.png')
-	char_moveright3 = pyg.image.load('resources/charAnim/right03.png')
-	char_moveright4 = pyg.image.load('resources/charAnim/right04.png')
-	char_moveright5 = pyg.image.load('resources/charAnim/right05.png')
-	char_moveright6 = pyg.image.load('resources/charAnim/right06.png')
-	char_moveright7 = pyg.image.load('resources/charAnim/right07.png')
-	char_moveright8 = pyg.image.load('resources/charAnim/right08.png')
-	char_moveright9 = pyg.image.load('resources/charAnim/right09.png')
-	anim_left = pyg.image.Animation.from_image_sequence([char_moveleft1,
+	char_stationary_right = pyg.image.load('resources/char/right.png')
+	char_stationary_left = pyg.image.load('resources/char/left.png')
+	char_moveleft1 = pyg.image.load('resources/char/leftwalk01.png')
+	char_moveleft2 = pyg.image.load('resources/char/leftwalk02.png')
+	char_moveleft3 = pyg.image.load('resources/char/leftwalk03.png')
+	char_moveleft4 = pyg.image.load('resources/char/leftwalk04.png')
+	char_moveleft5 = pyg.image.load('resources/char/leftwalk05.png')
+	char_moveleft6 = pyg.image.load('resources/char/leftwalk06.png')
+	char_turnleft = pyg.image.load('resources/char/leftturn.png')
+	char_moveright1 = pyg.image.load('resources/char/rightwalk01.png')
+	char_moveright2 = pyg.image.load('resources/char/rightwalk02.png')
+	char_moveright3 = pyg.image.load('resources/char/rightwalk03.png')
+	char_moveright4 = pyg.image.load('resources/char/rightwalk04.png')
+	char_moveright5 = pyg.image.load('resources/char/rightwalk05.png')
+	char_moveright6 = pyg.image.load('resources/char/rightwalk06.png')
+	char_turnright = pyg.image.load('resources/char/rightturn.png')
+	anim_walkleft = pyg.image.Animation.from_image_sequence([char_moveleft1,
 			char_moveleft2, char_moveleft3, char_moveleft4, char_moveleft5,
-			char_moveleft6, char_moveleft7, char_moveleft8, char_moveleft9], 0.1, True)
-	anim_right = pyg.image.Animation.from_image_sequence([char_moveright1,
+			char_moveleft6], 0.1, True)
+	anim_walkright = pyg.image.Animation.from_image_sequence([char_moveright1,
 			char_moveright2, char_moveright3, char_moveright4, char_moveright5,
-			char_moveright6, char_moveright7, char_moveright8, char_moveright9], 0.1, True)
+			char_moveright6], 0.1, True)
 
 	grounding = {
 				'normal' : Vec2d.zero(),
@@ -60,14 +56,14 @@ class Player(drawable.Drawable):
 				}
 
 	def __init__(self, space, *args, **kwargs):
-		super(Player,self).__init__(image_name='charRight.png',*args, **kwargs)
+		super(Player,self).__init__(image_name='char/right.png',*args, **kwargs)
 		space.add(self.body, self.head, self.head2, self.feet)
 		self.posx, self.posy = 100,100
 
 
 	def move_right(self, flag):
 		if flag:
-			self.image = self.anim_right
+			self.image = self.anim_walkright
 			self.v_x = PLAYER_VELOCITY
 		else:
 			self.image = self.char_stationary_right
@@ -76,7 +72,7 @@ class Player(drawable.Drawable):
 
 	def move_left(self, flag):
 		if flag:
-			self.image = self.anim_left
+			self.image = self.anim_walkleft
 			self.v_x = -PLAYER_VELOCITY
 		else:
 			self.image = self.char_stationary_left
