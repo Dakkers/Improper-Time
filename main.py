@@ -2,21 +2,12 @@ import pyglet as pyg
 from pyglet.window import key
 import pymunk as pym
 from pymunk.pyglet_util import draw as pdraw
-import resources, player, drawable, npc
+import resources, player, drawable
 
 
-"""
-class TimeEvolve(drawable.Drawable):
-	def __init__(self, initback):
-		self.bg = pyg.sprite.Sprite(pyg.resource.image(initback))
-		self.posx, self.posy = self.bg.position
-
-	def triggered(self, newback):
-		self.bg = pyg.sprite.Sprite(pyg.resource.image(newback))"""
 
 window = pyg.window.Window(800,400)
 space = pym.Space()
-#space1 = pym.Space()
 space.gravity = 0, -1000					#looks more real than -9.8 or -10
 space.collision_slop = 0.0000001			#reduce penetration
 space.collision_bias = pow(1.0-0.4, 120)	#determine speed of overlap - reduce penetration
@@ -25,22 +16,25 @@ floor = pym.Segment(space.static_body, (-1000,10), (5000,10), 14)
 floor.friction = 1.0
 floor.group = 1 		#objects of the same (non-zero) group do not collide!
 floor.restituion = 0.0 	#reduce bounciness
-space.add(floor)
+labwall = pym.Segment(space.static_body, (-35,-50), (-35, 1000), 20)
+forestwall = pym.Segment(space.static_body, (4540,-50), (4540, 1000), 20)
+space.add(floor, labwall, forestwall)
 
 drawable_batch = pyg.graphics.Batch()
 npc_batch = pyg.graphics.Batch()
 char = player.Player(space=space, batch=drawable_batch)
 
-activebg = drawable.Drawable('backgrounds/labback.png')
-activefg = pyg.sprite.Sprite(pyg.image.load('resources/backgrounds/labfront.png'), x=0, y=0)
+activebg = drawable.Drawable('backgrounds/lab_now_bg.png')
+activefg = pyg.sprite.Sprite(pyg.image.load('resources/backgrounds/lab_now_fg.png'), x=0, y=0)
 activebg.id = 0
-forest_past_bg = pyg.image.load('resources/backgrounds/pastforestback.png')
-forest_past_fg = pyg.image.load('resources/backgrounds/pastforestfront.png')
-lab_bg = pyg.image.load('resources/backgrounds/labback.png')
-lab_fg = pyg.image.load('resources/backgrounds/labfront.png')
+forest_past_bg = pyg.image.load('resources/backgrounds/forest_past_bg.png')
+forest_past_fg = pyg.image.load('resources/backgrounds/forest_past_fg.png')
+lab_now_bg = pyg.image.load('resources/backgrounds/lab_now_bg.png')
+lab_now_fg = pyg.image.load('resources/backgrounds/lab_now_fg.png')
+portal = pyg.sprite.Sprite(pyg.image.load('resources/portal-01.png'))
 activebg.add_child(char)
 
-drawEngine = False
+drawEngine = False	#initially do not show hitboxes/floors
 xoffset = 0.0
 ww, wh = window.width, window.height
 bgw, bgh = activebg.width, activebg.height
@@ -57,6 +51,7 @@ def on_draw():
 	if drawEngine:
 		pdraw(space)
 	drawable_batch.draw()
+	activefg.draw()
 	pyg.gl.glPopMatrix()
 
 @window.event
@@ -68,12 +63,9 @@ def on_key_press(symbol, modifiers):
 
 def update(dt):
 	global activebg
-	global count
-	global flag_glob
 	global xoffset
 	global bgw
 	global ww
-	global dtflag
 	space.step(dt)
 	char.update(dt)
 
@@ -91,21 +83,25 @@ def update(dt):
 	if char.posx < -30:
 		activebg.remove_child(char)
 		activebg.image = lab_bg
-		activebg.id = 1
+		activefg.image = lab_fg
+		activebg.id = 0
 		bgw,bgh = activebg.width, activebg.height
 		activebg.add_child(char)
 		xoffset = ww - bgw
-		char.posx = char.posx + bgw
+		char.body.position.x = char.posx + bgw
 	
-	if char.posx > 1315:
+
+	if char.posx > 1315 and activebg.id == 0:
 		activebg.remove_child(char)
 		activebg.image = forest_past_bg
 		activefg.image = forest_past_fg
+		activebg.id = 1
 		bgw,bgh = activebg.width, activebg.height
-		xoffset = 0
 		activebg.add_child(char)
-		char.body.x = 0
-	print char.x
+		xoffset = 0
+		char.body.position.x = 0
+	print char.posx
+
 
 window.push_handlers(char)
 window.push_handlers(char.key_handler)
