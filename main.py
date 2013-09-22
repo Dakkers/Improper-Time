@@ -2,7 +2,7 @@ import pyglet as pyg
 from pyglet.window import key
 import pymunk as pym
 from pymunk.pyglet_util import draw as pdraw
-import resources, player, drawable
+import resources, player, drawable, item
 
 def floorfunc(a,b,w,fric,rest):
 	f = pym.Segment(space.static_body, a, b, w)
@@ -60,6 +60,10 @@ bgw, bgh = activebg.width, activebg.height
 drawportal = False	#do not draw the portal immediately
 timetravel = False
 
+items = [Item('Watermelon', pyg.image.load('resources/items/watermelon.png'), 500, 50)]
+
+for item in items:
+    activebg.add_child(item)
 
 @window.event
 def on_draw():
@@ -155,7 +159,7 @@ def update(dt):
 			xoffset = ww - bgw
 			char.body.position.x  = char.posx + bgw
 			drawportal = False
-		
+
 
 		if char.posx > 1315 and activebg.id == 0:
 			activebg.remove_child(char)
@@ -169,6 +173,12 @@ def update(dt):
 			drawportal = True
 
 	print char.x
+
+    for item in items:
+        if (abs(char.body.position.x - item.x) < Item.icon_hsize//2) and (abs(char.body.position.y - item.y) < Item.icon_vsize//2):
+            char.inventory.addItem(item)
+            items.remove(item)
+            activebg.remove_child(item)
 
 """
 switchbg(lab_bg, lab_fg, 2, ww - bgw, char.posx + bgw, False)

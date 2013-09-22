@@ -2,7 +2,7 @@ import pyglet as pyg
 import pymunk as pym
 from pyglet.window import key
 from pymunk.vec2d import Vec2d
-import resources, drawable
+import resources, drawable, inventory
 
 PLAYER_VELOCITY = 600.0
 
@@ -54,6 +54,8 @@ class Player(drawable.Drawable):
 				'position' : Vec2d.zero(),
 				'body' : None
 				}
+
+	Inventory inventory = Inventory(4, 4, 0, 0)
 
 	def __init__(self, space, *args, **kwargs):
 		super(Player,self).__init__(image_name='char/right.png',*args, **kwargs)
