@@ -55,7 +55,7 @@ class Player(drawable.Drawable):
 				'body' : None
 				}
 
-	Inventory inventory = Inventory(4, 4, 0, 0)
+	inventory = inventory.Inventory(1, 4, 100, 400)
 
 	def __init__(self, space, *args, **kwargs):
 		super(Player,self).__init__(image_name='char/right.png',*args, **kwargs)
@@ -94,6 +94,8 @@ class Player(drawable.Drawable):
 				self.move_right(False)
 			else:							#if only LEFT is hit
 				self.move_left(True)
+
+		#if symbol == key.SPACE:
 
 
 

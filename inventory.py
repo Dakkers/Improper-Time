@@ -1,5 +1,5 @@
 import pyglet
-import Icon
+import item
 
 # An inventory consists of a list of length rows*cols and is always drawn with
 # the top left corner at (x,y).
@@ -12,7 +12,7 @@ class Inventory:
         self.y    = y
 
     def addItem(self, item):
-        if len(I) >= (rows*cols):
+        if len(self.I) >= (self.rows*self.cols):
             print "Inventory is full! Cannot add " + item.name + "!"
         else:
             self.I.append(item)
@@ -23,11 +23,15 @@ class Inventory:
         else:
             print item.name + " not found in inventory!"
 
-    def draw():
+    def updateItemPositions(self, charx, chary):
         for i in range(len(self.I)):
             if i < len(self.I):
-                x_offset = Icon.icon_hsize * (i % cols)
-                y_offset = Icon.icon_vsize * (i // rows)
-                I[i].blit(self.x + x_offset, self.y + y_offset)
+                x_offset = 50 * (i % self.cols)
+                y_offset = 50 * (i // self.rows)
+                if charx < 200:
+                    self.I[i].posx = 200
+                else:
+                    self.I[i].posx = charx
+                self.I[i].posy = 350
             else:
                 pass # Should probably blit a black square.
